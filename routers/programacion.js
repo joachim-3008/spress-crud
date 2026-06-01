@@ -4,7 +4,6 @@ const { programacion } = require("../datos/cursos.js").infoCursos;
 
 const routerProgramacion = express.Router();
 
-
 //middleware para convertir el body a json
 routerProgramacion.use(express.json());
 
@@ -56,49 +55,63 @@ routerProgramacion.post("/", (req, res) => {
   let cursoNuevo = req.body;
   //El metodo some() comprueba si al menos un elemento de un arreglo cumple con una condición específica
   const existe = programacion.some((curso) => curso.id === cursoNuevo.id);
-  
+
   if (existe) {
-    return res.status(400).send(`Ya existe un curso con el id: ${cursoNuevo.id}`);
+    return res
+      .status(400)
+      .send(`Ya existe un curso con el id: ${cursoNuevo.id}`);
   }
   programacion.push(cursoNuevo);
   res.send(programacion);
 });
 
 routerProgramacion.put("/:id", (req, res) => {
-    const cursoActualizado = req.body;
-    const id = req.params.id;
-    
-    const indice = programacion.findIndex((curso) => curso.id == id);
-    if (indice >= 0) {
-        programacion[indice] = cursoActualizado;
-        res.send(programacion);
-    } else {
-        res.status(404).send(`No se encontro el curso con el id: ${id}`);
+  const cursoActualizado = req.body;
+  const idUrl = req.params.id; // El ID que viene en la ruta
+
+  const indice = programacion.findIndex((curso) => curso.id == idUrl);
+
+  if (indice >= 0) {
+    if (cursoActualizado.id && cursoActualizado.id != idUrl) {
+      return res
+        .status(400)
+        .send(
+          `El ID del curso actualizado debe ser el mismo que el ID de la URL: ${idUrl}`,
+        );
     }
+
+    programacion[indice] = {
+      ...cursoActualizado,
+      id: Number(idUrl),
+    };
+
+    res.send(programacion);
+  } else {
+    res.status(404).send(`No se encontro el curso con el id: ${idUrl}`);
+  }
 });
-
 routerProgramacion.patch("/:id", (req, res) => {
-    const cambios = req.body;
-    const id = req.params.id;
+  const cambios = req.body;
+  const id = req.params.id;
 
-    const curso = programacion.find((curso) => curso.id == id);
-    if (curso) {
-        Object.assign(curso, cambios);
-        res.send(programacion);
-    } else {
-        res.status(404).send(`No se encontro el curso con el id: ${id}`);
-    }
+  const curso = programacion.find((curso) => curso.id == id);
+  if (curso) {
+    Object.assign(curso, cambios);
+    res.send(programacion);
+  } else {
+    res.status(404).send(`No se encontro el curso con el id: ${id}`);
+  }
 });
 
 routerProgramacion.delete("/:id", (req, res) => {
-    const id = req.params.id;
-    const indice = programacion.findIndex((curso) => curso.id == id);
-    if (indice >= 0) {
-        programacion.splice(indice, 1);
-        res.send(programacion);
-    } else {
-        res.status(404).send(`No se encontro el curso con el id: ${id}`);
-    }
+  const id = req.params.id;
+  const indice = programacion.findIndex((curso) => curso.id == id);
+  if (indice >= 0) {
+    programacion.splice(indice, 1);
+    res.send(programacion);
+  } else {
+    res.status(404).send(`No se encontro el curso con el id: ${id}`);
+  }
 });
 
 module.exports = routerProgramacion;
