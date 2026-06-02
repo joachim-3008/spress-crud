@@ -1,72 +1,137 @@
-# 🧮 Módulo de Cursos de Matemáticas - API Express
+```
+Markdown
+##  Cómo Ejecutar y Probar el Proyecto
+```
 
-Este repositorio contiene la lógica de enrutamiento y los controladores para gestionar un catálogo de cursos de matemáticas mediante una API REST funcional. Está construido con **Node.js** y **Express**, utilizando la modularización a través de `express.Router()`.
+```
+Sigue estos pasos para levantar el servidor localmente y probar los endpoints
+utilizando **Insomnia**.
+```
 
-El sistema simula operaciones de base de datos directamente en memoria RAM (utilizando un archivo local de JavaScript), permitiendo realizar un CRUD completo (*Create, Read, Update, Delete*).
+```
+### 1. Preparación del Entorno
+```
 
----
+```
+Si aún no lo has hecho, inicializa el proyecto e instala Express:
+```
 
-## 🚀 Características y Funcionalidades
+```
+```bash
+# Inicializar el proyecto Node.js
+npm init -y
+```
 
-* **Modularización Limpia:** Rutas totalmente independientes y listas para ser montadas en la aplicación principal (`app.js`).
-* **Filtrado Avanzado:** Búsqueda de cursos por tema, combinaciones de tema/nivel y ordenamiento dinámico por popularidad (vistas).
-* **Validaciones Básicas:** Control de duplicados por `id` al crear nuevos cursos y manejo de respuestas HTTP adecuadas (`200`, `400`, `404`).
-* **Soporte CRUD Completo:** Implementación de verbos HTTP estándar utilizando buenas prácticas.
+```
+# Instalar Express
+npm install express
+Asegúrate de que tu estructura de archivos sea la siguiente:
+```
 
----
+```
+Plaintext
+├── app.js
+├── rutas/
+│   └── matematicas.js
+└── package.json
+2. Ejecutar el Servidor
+Levanta el archivo principal desde tu terminal:
+```
 
-## 🛠️ Endpoints de la API
+```
+Bash
+node app.js
+(Asegúrate de que el servidor esté escuchando, por ejemplo, en el puerto 3000).
+```
 
-La ruta base asignada a este router (normalmente `/api/cursos/matematicas`) soporta las siguientes peticiones:
+```
+🧰 Guía de Pruebas en Insomnia
+Abre Insomnia, crea una nueva HTTP Request para cada caso y configúrala con los
+siguientes parámetros (asumiendo que tu base URL es
+http://localhost:3000/api/cursos/matematicas):
+```
 
-### 1. Lectura (GET)
-| Endpoint | Descripción | Ejemplo de Uso |
-| :--- | :--- | :--- |
-| `GET /` | Obtiene la lista completa de cursos de matemáticas. | `/` |
-| `GET /:tema` | Filtra los cursos que pertenecen a un tema específico. | `/algebra` |
-| `GET /:tema/vistas` | Obtiene los cursos de un tema ordenados de **mayor a menor** visitas. | `/calculo/vistas` |
-| `GET /:tema/:nivel` | Filtra cursos combinando de manera estricta tema y nivel. | `/aritmetica/basico` |
+```
+🧰 GET: Obtener todos los cursos
+Método: GET
+```
 
-### 2. Creación (POST)
-| Endpoint | Descripción | Detalle |
-| :--- | :--- | :--- |
-| `POST /` | Añade un nuevo curso al arreglo. | Requiere un JSON en el `body`. Valida que el `id` no exista previamente. Retorna la lista actualizada. |
+```
+URL: http://localhost:3000/api/cursos/matematicas
+```
 
-### 3. Actualización (PUT y PATCH)
-| Endpoint | Descripción | Detalle |
-| :--- | :--- | :--- |
-| `PUT /:id` | Reemplazo **absoluto** de un curso. | Sustituye el objeto existente por completo con las nuevas propiedades enviadas en el `body`. |
-| `PATCH /:id` | Actualización **parcial**. | Modifica únicamente los campos enviados en el `body` usando `Object.assign()`, manteniendo intactos los demás. |
+```
+🧰 GET: Filtrar por tema
+Método: GET
+URL: http://localhost:3000/api/cursos/matematicas/algebra
+```
 
-### 4. Eliminación (DELETE)
-| Endpoint | Descripción | Detalle |
-| :--- | :--- | :--- |
-| `DELETE /:id` | Elimina un curso permanentemente. | Busca el curso por su `id` y lo remueve del array mediante `.splice()`. |
+```
+🧰 GET: Cursos ordenados por vistas
+Método: GET
+```
 
----
+```
+URL: http://localhost:3000/api/cursos/matematicas/calculo/vistas
+🧰 POST: Crear un nuevo curso
+Método: POST
+URL: http://localhost:3000/api/cursos/matematicas
+Cuerpo (Body): Selecciona JSON en la pestaña desplegable y pega:
+```
 
-## ⚙️ Estructura del Código Clave
+```
+JSON
+  {
+    "id": 4,
+    "titulo": "Geometría Analítica",
+    "tema": "geometria",
+    "nivel": "intermedio",
+    "vistas": 1200
+  }
+```
 
-El archivo utiliza métodos nativos de JavaScript modernos para manipular los datos en memoria de forma eficiente:
+```
+🧰 PUT: Reemplazo absoluto de un curso
+Método: PUT
+```
 
-* **`.filter()`**: Para aislar los cursos que cumplen con los parámetros de la URL sin mutar el array original.
-* **`.sort((a, b) => b.vistas - a.vistas)`**: Ordenamiento numérico descendente basado en el atributo de visitas.
-* **`.some()`**: Validación ultra rápida antes del `POST` para evitar la colisión de IDs idénticos.
-* **`Object.assign(curso, cambios)`**: Fusión de objetos clave para optimizar la petición `PATCH`.
+```
+URL: http://localhost:3000/api/cursos/matematicas/1 (Reemplaza el curso con ID
+1)
+```
 
----
+```
+Cuerpo (Body): Selecciona JSON y pega:
+```
 
-## 📝 Requisitos para la Integración
+```
+JSON
+  {
+    "id": 1,
+    "titulo": "Álgebra Lineal Avanzada",
+    "tema": "algebra",
+    "nivel": "avanzado",
+    "vistas": 5000
+  }
+🧰 PATCH: Actualización parcial (Solo vistas)
+Método: PATCH
+```
 
-Para que este router funcione correctamente en tu servidor principal, asegúrate de tener configurado el middleware para leer JSON en tu `app.js`:
+```
+URL: http://localhost:3000/api/cursos/matematicas/2 (Modifica el curso con ID 2)
+Cuerpo (Body): Selecciona JSON y pega:
+```
 
-```javascript
-const express = require('express');
-const app = express();
-const routerMatematicas = require('./rutas/matematicas.js'); // Ruta de este archivo
+```
+JSON
+  {
+    "vistas": 8500
+  }
+🧰 DELETE: Eliminar un curso
+Método: DELETE
+```
 
-// Middleware crucial para POST, PUT y PATCH
-app.use(express.json());
+```
+URL: http://localhost:3000/api/cursos/matematicas/3 (Elimina el curso con ID 3)
+```
 
-// Montar el router en la ruta correspondiente
-app.use('/api/cursos/matematicas', routerMatematicas);
