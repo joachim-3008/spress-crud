@@ -13,18 +13,14 @@ utilizando **Insomnia**.
 ```
 
 ```
-Si aún no lo has hecho, inicializa el proyecto e instala Express:
+Clona el repositorio con git clone https://github.com/joachim-3008/spress-crud.git
 ```
 
 ```
 ```bash
-# Inicializar el proyecto Node.js
-npm init -y
+# Instalar dependencias
+npm install 
 ```
-
-```
-# Instalar Express
-npm install express
 Asegúrate de que tu estructura de archivos sea la siguiente:
 ```
 
